@@ -1,7 +1,8 @@
 const request = require('requestretry')
-const unusedFilename = require('unused-filename');
+const unusedFilename = require('unused-filename')
 const https = require('https')
 const fs = require('fs')
+const linkCheck = require('link-check')
 
 const APP_SLUG = process.env.BITRISE_APP_SLUG
 const BUILD_SLUGS = process.env.buildslugs.split('\n')
@@ -51,7 +52,17 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
               if (error) throw new Error(error)
               const artifactObj = JSON.parse(response.body).data
               if (artifactObj) {
+                console.log('artifactObj', artifactObj)
                 console.log('Artifact URL:', artifactObj.expiring_download_url)
+
+                linkCheck(artifactObj.expiring_download_url, (err, result) => {
+                  console.log('link checking', artifactObj.expiring_download_url)
+                  if (err) {
+                    console.error(err)
+                    return
+                  }
+                  console.log(`${result.link} is ${result.status}`)
+                })
                 const file = fs.createWriteStream(unusedFilename.sync(SAVE_PATH + artifactObj.title))
                 https.get(artifactObj.expiring_download_url, (res) => {
                   res.pipe(file)
