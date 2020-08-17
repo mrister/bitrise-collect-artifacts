@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "Bitrise Collect Artifacts",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "requestretry": "^4.1.1",
+    "unused-filename": "^2.1.0"
   }
 }

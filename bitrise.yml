@@ -5,10 +5,13 @@ app:
   envs:
   - BITRISE_STEP_ID: build-collect-artifacts
   - BITRISE_STEP_VERSION: "0.1.1"
-  - BITRISE_STEP_GIT_CLONE_URL: https://github.com/DamienBitrise/bitrise-collect-artifacts.git
+  - BITRISE_STEP_GIT_CLONE_URL: https://github.com/mrister/bitrise-collect-artifacts.git
   - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
   - TEST_WORKFLOWS: $TEST_WORKFLOWS
   - ACCESS_TOKEN: $ACCESS_TOKEN
+  - MAX_ATTEMPTS: 3
+  - RETRY_DELAY: 3500
+  - REQUEST_TIMEOUT: 120000
 
 workflows:
   test:
@@ -49,7 +52,7 @@ workflows:
             set -e
             export CI=true
             releaseman create --version $BITRISE_STEP_VERSION
-            
+
   share-this-step:
     envs:
       # if you want to share this step into a StepLib

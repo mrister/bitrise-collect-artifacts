@@ -1,15 +1,15 @@
 title: "Bitrise Collect Artifacts"
 summary: "Collect Artifacts from workflow started builds"
 description: "Bitrise Collect Artifacts"
-website: https://github.com/DamienBitrise/bitrise-collect-artifacts
-source_code_url: https://github.com/DamienBitrise/bitrise-collect-artifacts
-support_url: https://github.com/DamienBitrise/bitrise-collect-artifacts/issues
+website: https://github.com/mrister/bitrise-collect-artifacts
+source_code_url: https://github.com/mrister/bitrise-collect-artifacts
+support_url: https://github.com/mrister/bitrise-collect-artifacts/issues
 host_os_tags:
   - osx-10.10
   - ubuntu-16.04
 type_tags:
   - test
-  
+
 project_type_tags:
   - ios
 
@@ -31,11 +31,35 @@ inputs:
       summary: Your access token
       description: |
           Your access token
-          
-          To acquire a `Personal Access Token` for your user, sign in with that user on [bitrise.io](https://bitrise.io),  
+
+          To acquire a `Personal Access Token` for your user, sign in with that user on [bitrise.io](https://bitrise.io),
           go to your `Account Settings` page, and select the [Security tab](https://www.bitrise.io/me/profile#/security) on the left side.
       is_required: true
       is_sensitive: true
+  - max_attempts: $MAX_ATTEMPTS
+      opts:
+        title: Number of maximal retry attempts
+        summary: Number of maximal retry attempts
+        description: |
+          Number of maximal retry attempts
+        is_required: false
+        is_sensitive: false
+  - retry_delay: $RETRY_DELAY
+      opts:
+        title: Number of ms to delay a retry
+        summary: Number of ms to delay a retry
+        description: |
+          Number of ms to delay a retry
+        is_required: false
+        is_sensitive: false
+  - request_timeout: $REQUEST_TIMEOUT
+      opts:
+        title: Number of ms to timeout node requests
+        summary: Number of ms to timeout node requests
+        description: |
+          Number of ms to timeout node requests
+        is_required: false
+        is_sensitive: false
   - buildslugs: $ROUTER_STARTED_BUILD_SLUGS
     opts:
       title: Build Slugs
