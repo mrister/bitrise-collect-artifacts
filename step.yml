@@ -37,29 +37,29 @@ inputs:
       is_required: true
       is_sensitive: true
   - max_attempts: $MAX_ATTEMPTS
-      opts:
-        title: Number of maximal retry attempts
-        summary: Number of maximal retry attempts
-        description: |
-          Number of maximal retry attempts
-        is_required: false
-        is_sensitive: false
+    opts:
+      title: Number of maximal retry attempts
+      summary: Number of maximal retry attempts
+      description: |
+        Number of maximal retry attempts
+      is_required: false
+      is_sensitive: false
   - retry_delay: $RETRY_DELAY
-      opts:
-        title: Number of ms to delay a retry
-        summary: Number of ms to delay a retry
-        description: |
-          Number of ms to delay a retry
-        is_required: false
-        is_sensitive: false
+    opts:
+      title: Number of ms to delay a retry
+      summary: Number of ms to delay a retry
+      description: |
+        Number of ms to delay a retry
+      is_required: false
+      is_sensitive: false
   - request_timeout: $REQUEST_TIMEOUT
-      opts:
-        title: Number of ms to timeout node requests
-        summary: Number of ms to timeout node requests
-        description: |
-          Number of ms to timeout node requests
-        is_required: false
-        is_sensitive: false
+    opts:
+      title: Number of ms to timeout node requests
+      summary: Number of ms to timeout node requests
+      description: |
+        Number of ms to timeout node requests
+      is_required: false
+      is_sensitive: false
   - buildslugs: $ROUTER_STARTED_BUILD_SLUGS
     opts:
       title: Build Slugs
