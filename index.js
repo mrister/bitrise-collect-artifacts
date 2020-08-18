@@ -1,6 +1,5 @@
 const request = require('requestretry')
 const unusedFilename = require('unused-filename')
-const https = require('https')
 const fs = require('fs')
 const linkCheck = require('link-check')
 
@@ -11,6 +10,7 @@ const SAVE_PATH = process.env.save_path
 const MAX_ATTEMPTS = process.env.max_attempts
 const RETRY_DELAY = process.env.retry_delay
 const REQUEST_TIMEOUT = process.env.request_timeout
+const BUILD_SUCCESS_STATUS = 1
 
 console.log('APP_SLUG:', APP_SLUG)
 console.log('BUILD_SLUGS:', BUILD_SLUGS)
@@ -35,7 +35,7 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
   request(options, function (error, response) {
     if (error) throw new Error(error)
     const buildStatus = JSON.parse(response.body).data
-    if (buildStatus && buildStatus.status != 0) {
+    if (buildStatus && buildStatus.status == BUILD_SUCCESS_STATUS) {
       options.url = url + '/artifacts'
 
       // Get Build Artifacts
@@ -51,17 +51,21 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
               if (error) throw new Error(error)
               const artifactObj = JSON.parse(response.body).data
               if (artifactObj) {
-                const url = artifactObj.expiring_download_url
-                console.log('Artifact URL:', url)
-                linkCheck(url, (err, result) => {
+                const downloadUrl = artifactObj.expiring_download_url
+                console.log('Artifact URL:', downloadUrl)
+                linkCheck(downloadUrl, (err) => {
                   if (err) {
-                    console.error(err)
+                    console.error(`Error on ${downloadUrl}`, err)
                   }
                 })
-                const file = fs.createWriteStream(unusedFilename.sync(SAVE_PATH + artifactObj.title))
-                https.get(url, (res) => {
-                  res.pipe(file)
+
+                request({ ...options, downloadUrl, headers: null, json: false }, (error, response) => {
+                  if (error) throw new Error(error)
+                  const file = fs.createWriteStream(unusedFilename.sync(SAVE_PATH + artifactObj.title))
+                  response.pipe(file)
                 })
+              } else {
+                console.warn('No artifactObj found')
               }
             })
           })
