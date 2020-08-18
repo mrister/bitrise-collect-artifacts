@@ -35,7 +35,6 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
   request(options, function (error, response) {
     if (error) throw new Error(error)
     const buildStatus = JSON.parse(response.body).data
-    console.info('buildStatus', buildStatus)
     if (buildStatus && buildStatus.status != 0) {
       options.url = url + '/artifacts'
 
@@ -52,18 +51,12 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
               if (error) throw new Error(error)
               const artifactObj = JSON.parse(response.body).data
               if (artifactObj) {
-                const url = artifactObj.public_install_page_url || artifactObj.expiring_download_url
-                console.log('artifactObj', artifactObj)
+                const url = artifactObj.expiring_download_url
                 console.log('Artifact URL:', url)
-
-
                 linkCheck(url, (err, result) => {
-                  console.log('link checking', url)
                   if (err) {
                     console.error(err)
-                    return
                   }
-                  console.log(`${result.link} is ${result.status}`)
                 })
                 const file = fs.createWriteStream(unusedFilename.sync(SAVE_PATH + artifactObj.title))
                 https.get(url, (res) => {
