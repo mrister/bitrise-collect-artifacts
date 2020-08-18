@@ -10,7 +10,6 @@ const SAVE_PATH = process.env.save_path
 const MAX_ATTEMPTS = process.env.max_attempts
 const RETRY_DELAY = process.env.retry_delay
 const REQUEST_TIMEOUT = process.env.request_timeout
-const BUILD_SUCCESS_STATUS = 1
 
 console.log('APP_SLUG:', APP_SLUG)
 console.log('BUILD_SLUGS:', BUILD_SLUGS)
@@ -33,14 +32,21 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
   }
 
   request(options, function (error, response) {
-    if (error) throw new Error(error)
+    if (error) {
+      console.error(error)
+      throw new Error(error)
+    }
     const buildStatus = JSON.parse(response.body).data
-    if (buildStatus && buildStatus.status == BUILD_SUCCESS_STATUS) {
+    console.log('BuildStatus', buildStatus)
+    if (buildStatus) {
       options.url = url + '/artifacts'
 
       // Get Build Artifacts
       request(options, function (error, response) {
-        if (error) throw new Error(error)
+        if (error) {
+          console.error(error)
+          throw new Error(error)
+        }
         const artifactsObj = JSON.parse(response.body).data
         if (artifactsObj) {
           artifactsObj.forEach((artifact) => {
@@ -48,9 +54,14 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
 
             // Get Build Artifact
             request(options, (error, response) => {
-              if (error) throw new Error(error)
+              if (error) {
+                console.error(error)
+                throw new Error(error)
+              }
+
               const artifactObj = JSON.parse(response.body).data
               if (artifactObj) {
+                console.log('ArtifactObj', artifactObj)
                 const downloadUrl = artifactObj.expiring_download_url
                 console.log('Artifact URL:', downloadUrl)
                 linkCheck(downloadUrl, (err) => {
@@ -60,12 +71,15 @@ for (let i = 0; i < BUILD_SLUGS.length; i++) {
                 })
 
                 request({ ...options, downloadUrl, headers: null, json: false }, (error, response) => {
-                  if (error) throw new Error(error)
+                  if (error) {
+                    console.error(error)
+                    throw new Error(error)
+                  }
                   const file = fs.createWriteStream(unusedFilename.sync(SAVE_PATH + artifactObj.title))
                   response.pipe(file)
                 })
               } else {
-                console.warn('No artifactObj found')
+                console.warn('No artifactObj found', response.body)
               }
             })
           })
